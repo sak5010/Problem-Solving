@@ -1,3 +1,4 @@
+"use strict";
 const fs = require("fs");
 let input = fs.readFileSync('/dev/stdin').toString().trim();
 
@@ -51,15 +52,23 @@ const dx = [0, 0, 1, -1];
 const dy = [1, -1, 0, 0];
 
 const queue = new Queue();
+let isAllRipened = true;
 for (let i = 0; i < n; i++) {
   for (let j = 0; j < m; j++) {
     if (box[i][j] === 1) {
       queue.enqueue([i, j]);
+      box[i][j] = 1;
+    } else if (box[i][j] === 0) {
+      isAllRipened = false;
     }
   }
 }
 
-let maxDay = 0;
+if (isAllRipened) {
+  console.log(0);
+  return;
+}
+
 while (queue.size !== 0) {
   const [queuedX, queuedY] = queue.dequeue();
   for (let dir = 0; dir < 4; dir++) {
@@ -71,14 +80,17 @@ while (queue.size !== 0) {
     box[dirX][dirY] = 1;
     days[dirX][dirY] = days[queuedX][queuedY] + 1;
   }
-  maxDay = Math.max(maxDay, days[queuedX][queuedY]);
 }
 
-let isRipeImpossible = false;
+let maxDay = 1;
 for (let i = 0; i < n; i++) {
   for (let j = 0; j < m; j++) {
-    if (box[i][j] === 0) isRipeImpossible = true;
+    if (box[i][j] === 0) {
+      console.log(-1);
+      return;
+    }
+    maxDay = Math.max(maxDay, days[i][j]);
   }
 }
 
-console.log(isRipeImpossible ? -1 : maxDay);
+console.log(maxDay);
