@@ -1,27 +1,30 @@
 const fs = require("fs");
 let input = fs.readFileSync('/dev/stdin').toString().trim();
 
-const MAX_RAIL_DISTANCE = 200000;
+const MAX_DIST = 200000;
 
 const [n, k] = input.split(" ").map(Number);
-const rail = new Array(MAX_RAIL_DISTANCE).fill(-1);
+const dist = new Array(MAX_DIST).fill(-1);
 
 const q = [];
-rail[n] = 0;
+dist[n] = 0;
 q.push(n);
 while (q.length !== 0) {
   const x = q.shift();
-  if (x > 0 && rail[x - 1] === -1) {
-    rail[x - 1] = rail[x] + 1;
+  if (x === k) {
+    console.log(dist[k]);
+    break;
+  }
+  if (x > 0 && dist[x - 1] === -1) {
     q.push(x - 1);
+    dist[x - 1] = dist[x] + 1;
   }
-  if (x < MAX_RAIL_DISTANCE && rail[x + 1] === -1) {
-    rail[x + 1] = rail[x] + 1;
+  if (x < MAX_DIST && dist[x + 1] === -1) {
     q.push(x + 1);
+    dist[x + 1] = dist[x] + 1;
   }
-  if (2 * x < MAX_RAIL_DISTANCE && rail[2 * x] === -1) {
-    rail[2 * x] = rail[x] + 1;
-    q.push(2 * x);
+  if (x * 2 < MAX_DIST && dist[x * 2] === -1) {
+    q.push(x * 2);
+    dist[x * 2] = dist[x] + 1;
   }
 }
-console.log(rail[k]);
